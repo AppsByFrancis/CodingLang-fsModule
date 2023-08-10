@@ -1,5 +1,3 @@
-const { fdatasync } = require('fs');
-
 const fs = require('fs').promises;
 
 // FIRST OPEN FILE - each opened file has
