@@ -1,1 +1,1 @@
-create a file
+add to text2.txt content: yo mama

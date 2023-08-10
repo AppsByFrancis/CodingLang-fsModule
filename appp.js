@@ -2,54 +2,51 @@ const { createInflate } = require('zlib');
 
 const fs = require('fs').promises;
 
-( async () => {
+(async () => {
+    const CREATE_FILE = 'create a file';
 
-    const CREATE_FILE = "create a file";
-
-    const fileHandler = await fs.open('file.txt', 'r')
-
-    const createFile = async (path) => {
+    const createFile = async (path) => {
         try {
             const existingFile = await fs.open(path, 'r');
             existingFile.close();
-            return console.log(`File: ${path} exists`)
+            return console.log(`File: ${path} already exists!`)
         } catch (err) {
-            const newFile = await fs.open(path, 'w')
-            newFile.close()
+            const newFile = await fs.open(path, 'w');
+            newFile.close();
             return console.log(`File: ${path} has been created`)
         }
     }
-
-    fileHandler.on("change", async () => {
-        
-        //READ ARGS
-        const fileSize = (await fileHandler.stat()).size;
     
-        const buffer = Buffer.alloc(fileSize);
+    //OPEN FILE
+    const fileHandler = await fs.open('./file.txt', 'r');
+
+    fileHandler.on('change', async() => {
+        const fileSize =(await fileHandler.stat()).size;
+        console.log(fileSize)
+        const buffer = Buffer.alloc(fileSize)
         const offset = 0;
         const length = buffer.byteLength;
         const position = 0;
     
-        // READ file
-        await fileHandler.read(buffer, offset, length, position);
-        console.log(buffer.toString())
+        //Read file
+        await fileHandler.read(buffer, offset, length, position)
 
-        if (fileHandler.includes(CREATE_FILE)){
-            const filePath = fileHandler.substring(CREATE_FILE + 1);
-            createFile(filePath)
+        const data = buffer.toString();
+
+        if(data.includes(CREATE_FILE)){
+            const path = data.substring(CREATE_FILE.length + 1);
+            createFile(path)
         }
-
     })
+    // ARGS
 
+    //FILE WATCHER
 
+    const watcher = fs.watch('./file.txt');
 
-    // WATCH file
-    const watcher = fs.watch('file.txt');
-
-    for await( const event of watcher ){
-        if(event.eventType === 'change'){
-            fileHandler.emit('change')
-        }
+    for await (const event of watcher){
+        if (event.eventType === 'change');
+        fileHandler.emit('change');
     }
 
-})();
+})()
