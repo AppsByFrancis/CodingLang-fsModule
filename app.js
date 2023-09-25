@@ -10,7 +10,7 @@ const fs = require('fs').promises;
     const CREATE_FILE = "create a file";
     const DELETE_FILE = "delete file";
     const RENAME_FILE = "rename from";
-    const ADD_TO_FILE = "add to"
+    const ADD_TO_FILE = "add to";
 
     const fileHandler = await fs.open('./file.txt', 'r');
 
@@ -57,6 +57,7 @@ const fs = require('fs').promises;
             }
         }
     }
+
     let flag
     const addToFile = async (path, content) => {
         if(flag === content) return;
@@ -120,7 +121,6 @@ const fs = require('fs').promises;
         }
         
     } )
-    // console.log(stats)
     
 
     const watcher = fs.watch('./file.txt') // watches file for changes (event.eventType = change || rename)
@@ -128,7 +128,6 @@ const fs = require('fs').promises;
     for await (const event of watcher){
         if(event.eventType === "change"){
             fileHandler.emit('change');
-            
         }
     }
 })(); 
